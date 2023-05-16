@@ -220,7 +220,7 @@ select khach_hang.ma_khach_hang, khach_hang.ho_ten, loai_khach.ten_loai_khach, h
  on khach_hang.ma_khach_hang = hop_dong.ma_khach_hang
  join dich_vu
  on dich_vu.ma_dich_vu = hop_dong.ma_dich_vu
- join hop_dong_chi_tiet
+ 
  
 
 
