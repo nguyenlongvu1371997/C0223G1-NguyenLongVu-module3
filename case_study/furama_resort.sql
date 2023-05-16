@@ -189,6 +189,45 @@ value(5, 2, 4),
 (2, 1, 2),
 (2, 12, 2);
 
+select*
+from nhan_vien
+where (substring_index(nhan_vien.ho_ten," ",-1) like 'H%'
+or substring_index(nhan_vien.ho_ten," ",-1) like 'T%'
+or substring_index(nhan_vien.ho_ten," ",-1) like 'K%')
+and character_length(replace(nhan_vien.ho_ten,' ',''))<=15;
+
+select *
+from khach_hang
+where timestampdiff(year, khach_hang.ngay_sinh, curdate()) >= 18
+&& timestampdiff(year, khach_hang.ngay_sinh, curdate()) <= 50
+&& (dia_chi like '%Đà Nẵng' or dia_chi like '%Quảng Trị');
+
+select khach_hang.ho_ten,count(khach_hang.ho_ten) as 'so lan dat phong'
+from khach_hang
+join loai_khach
+on khach_hang.ma_loai_khach = loai_khach.ma_loai_khach
+join hop_dong
+on khach_hang.ma_khach_hang = hop_dong.ma_khach_hang
+where ten_loai_khach = 'Diamond'
+group by khach_hang.ho_ten;
+
+select khach_hang.ma_khach_hang, khach_hang.ho_ten, loai_khach.ten_loai_khach, hop_dong.ma_hop_dong,
+ dich_vu.ten_dich_vu, ngay_lam_hop_dong, ngay_ket_thuc
+ from khach_hang
+ join loai_khach
+ on loai_khach.ma_loai_khach = khach_hang.ma_loai_khach
+ left join hop_dong
+ on khach_hang.ma_khach_hang = hop_dong.ma_khach_hang
+ join dich_vu
+ on dich_vu.ma_dich_vu = hop_dong.ma_dich_vu
+ join hop_dong_chi_tiet
+ 
+
+
+
+
+
+
 
 
 

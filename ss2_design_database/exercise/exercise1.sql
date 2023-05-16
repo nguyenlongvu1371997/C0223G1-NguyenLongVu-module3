@@ -1,5 +1,5 @@
-create database lesson2_exercise1;
-use lesson2_exercise1;
+create database quan_li_don_dat_hang;
+use quan_li_don_dat_hang;
 
 create table phieu_xuat(
 so_px int auto_increment primary key,
