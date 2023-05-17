@@ -83,4 +83,31 @@ join subject
 on subject.sub_id = mark.sub_id
 order by mark DESC;
 
+select *
+from subject
+where credit in (
+select max(credit)
+from subject);
+
+select subject.sub_name, mark.mark
+from subject
+join mark
+on mark.sub_id = subject.sub_id
+where mark.mark in (
+select max(mark.mark)
+from mark
+)
+having mark.mark in (
+select max(mark.mark)
+from mark
+);
+
+select student.student_id, student.student_name, avg(mark.mark)
+from student
+join mark
+on student.student_id = mark.student_id
+group by student_id
+order by avg(mark.mark);
+
+
 

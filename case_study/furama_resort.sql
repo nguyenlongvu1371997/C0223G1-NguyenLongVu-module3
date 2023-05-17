@@ -189,6 +189,7 @@ value(5, 2, 4),
 (2, 1, 2),
 (2, 12, 2);
 
+-- câu 2
 select*
 from nhan_vien
 where (substring_index(nhan_vien.ho_ten," ",-1) like 'H%'
@@ -196,12 +197,14 @@ or substring_index(nhan_vien.ho_ten," ",-1) like 'T%'
 or substring_index(nhan_vien.ho_ten," ",-1) like 'K%')
 and character_length(replace(nhan_vien.ho_ten,' ',''))<=15;
 
+-- câu 3
 select *
 from khach_hang
 where timestampdiff(year, khach_hang.ngay_sinh, curdate()) >= 18
 && timestampdiff(year, khach_hang.ngay_sinh, curdate()) <= 50
 && (dia_chi like '%Đà Nẵng' or dia_chi like '%Quảng Trị');
 
+-- câu 4
 select khach_hang.ho_ten,count(khach_hang.ho_ten) as 'so lan dat phong'
 from khach_hang
 join loai_khach
@@ -211,8 +214,9 @@ on khach_hang.ma_khach_hang = hop_dong.ma_khach_hang
 where ten_loai_khach = 'Diamond'
 group by khach_hang.ho_ten;
 
-select khach_hang.ma_khach_hang, khach_hang.ho_ten, loai_khach.ten_loai_khach, hop_dong.ma_hop_dong,
- dich_vu.ten_dich_vu, ngay_lam_hop_dong, ngay_ket_thuc
+-- câu 5
+select khach_hang.ma_khach_hang, khach_hang.ho_ten, loai_khach.ten_loai_khach, hop_dong.ma_hop_dong, dich_vu.ten_dich_vu,
+ ngay_lam_hop_dong, ngay_ket_thuc, dich_vu.chi_phi_thue + dich_vu_di_kem.gia * hop_dong_chi_tiet.so_luong as 'tong tien'
  from khach_hang
  join loai_khach
  on loai_khach.ma_loai_khach = khach_hang.ma_loai_khach
@@ -220,20 +224,130 @@ select khach_hang.ma_khach_hang, khach_hang.ho_ten, loai_khach.ten_loai_khach, h
  on khach_hang.ma_khach_hang = hop_dong.ma_khach_hang
  join dich_vu
  on dich_vu.ma_dich_vu = hop_dong.ma_dich_vu
+ join hop_dong_chi_tiet
+ on hop_dong_chi_tiet.ma_hop_dong = hop_dong.ma_hop_dong
+ join dich_vu_di_kem
+ on dich_vu_di_kem.ma_dich_vu_di_kem = hop_dong_chi_tiet.ma_dich_vu_di_kem;
+ 
+ -- Hiển thị dịch vụ được đặt trong quý 1 năm 2021
+ select dich_vu.ma_dich_vu, ten_dich_vu, dien_tich, chi_phi_thue, ten_loai_dich_vu
+ from dich_vu
+ join loai_dich_vu
+ on loai_dich_vu.ma_loai_dich_vu = dich_vu.ma_loai_dich_vu
+ left join hop_dong 
+ on hop_dong.ma_dich_vu = dich_vu.ma_dich_vu
+ where (hop_dong.ngay_lam_hop_dong between '2021-01-01' and '2021-03-31')
+ or (hop_dong.ngay_ket_thuc between '2021-01-01' and '2021-03-31')
+ or (hop_dong.ngay_lam_hop_dong<'2021-01-01' and hop_dong.ngay_ket_thuc>'2021-03-31')
+ group by dich_vu.ma_dich_vu;
+ 
+-- câu 6: hiển thị dịch vụ không đặt trong quý 1 năm 2021
+ select dich_vu.ma_dich_vu, ten_dich_vu, dien_tich, chi_phi_thue, ten_loai_dich_vu
+ from dich_vu
+ join loai_dich_vu
+ on loai_dich_vu.ma_loai_dich_vu = dich_vu.ma_loai_dich_vu
+ left join hop_dong 
+ on hop_dong.ma_dich_vu = dich_vu.ma_dich_vu
+ where dich_vu.ma_dich_vu not in (
+ select dich_vu.ma_dich_vu
+ from dich_vu
+ left join hop_dong 
+ on hop_dong.ma_dich_vu = dich_vu.ma_dich_vu
+ where (hop_dong.ngay_lam_hop_dong between '2021-01-01' and '2021-03-31')
+ or (hop_dong.ngay_ket_thuc between '2021-01-01' and '2021-03-31')
+ or (hop_dong.ngay_lam_hop_dong<'2021-01-01' and hop_dong.ngay_ket_thuc>'2021-03-31')
+ )
+ group by dich_vu.ma_dich_vu;
+ 
+ -- câu 7
+ select dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu
+ from dich_vu dv
+ join loai_dich_vu ldv
+ on dv.ma_loai_dich_vu = ldv.ma_loai_dich_vu
+ join hop_dong hd
+ on hd.ma_dich_vu = dv.ma_dich_vu
+ where dv.ma_dich_vu not in(
+ select dv.ma_dich_vu
+ from  dich_vu dv
+ join hop_dong hd
+ on dv.ma_dich_vu = hd.ma_dich_vu
+ where year(hd.ngay_lam_hop_dong) = 2021
+ group by dv.ma_dich_vu) 
+ && year(hd.ngay_lam_hop_dong) = 2020
+group by dv.ma_dich_vu;
+
+-- câu 8: cách 1
+select kh.ho_ten
+from khach_hang kh
+group by kh.ho_ten;
+
+-- câu 8: cách 2
+select distinct kh.ho_ten
+from khach_hang kh;
+
+-- câu 8: cách 3
+select kh.ho_ten
+from khach_hang kh
+union
+select kh.ho_ten
+from khach_hang kh;
+
+-- câu 9
+select month(hd.ngay_lam_hop_dong) as 'thang', count(hd.ma_hop_dong)
+from hop_dong hd
+where year(hd.ngay_lam_hop_dong)=2021
+group by month(hd.ngay_lam_hop_dong)
+order by month(hd.ngay_lam_hop_dong);
+
+-- câu 10
+select hd.ma_hop_dong, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc, hd.tien_dat_coc, ifnull(sum(hdct.so_luong),0)
+from hop_dong hd
+left join hop_dong_chi_tiet hdct
+on hd.ma_hop_dong = hdct.ma_hop_dong
+group by hd.ma_hop_dong
+order by hd.ma_hop_dong;
+
+-- câu 11
+select kh.ho_ten,dvdk.ma_dich_vu_di_kem, dvdk.ten_dich_vu_di_kem
+from khach_hang kh
+join loai_khach lk
+on kh.ma_loai_khach = lk.ma_loai_khach
+join hop_dong hd
+on kh.ma_khach_hang = hd.ma_khach_hang
+join hop_dong_chi_tiet hdct
+on hdct.ma_hop_dong = hd.ma_hop_dong
+join dich_vu_di_kem dvdk
+on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+where lk.ten_loai_khach='Diamond'
+and (kh.dia_chi like '%Vinh' or kh.dia_chi like '%Quảng Ngãi');
+
+-- câu 12
+
+
+-- câu 13
+
+
+-- câu 14
+
+
+-- câu 15
+
+
+-- câu 16
+
+
+-- câu 17
+
+
+-- câu 18
+
+
+-- câu 19
+
+
+-- câu 20
+
+
+
  
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
