@@ -405,26 +405,122 @@ group by nv.ma_nhan_vien
 having count(nv.ma_nhan_vien) <=3;
 
 -- câu 16
+set sql_safe_updates = 0;
+
+delete
+from nhan_vien nv
+where nv.ma_nhan_vien not in(
+select *
+from(
 select nv.ma_nhan_vien
 from nhan_vien nv
 join hop_dong hd
 on nv.ma_nhan_vien = hd.ma_nhan_vien
 where year(hd.ngay_lam_hop_dong) between 2019 and 2021
 group by nv.ma_nhan_vien
+) as t
+);
 
+set sql_safe_updates = 1;
 
 -- câu 17
+set sql_safe_updates = 0;
 
+update khach_hang
+set ma_loai_khach = 1
+where ma_loai_khach = 2 
+and ma_khach_hang in (
+select *
+from (
+select kh.ma_khach_hang
+from khach_hang kh
+join hop_dong hd
+on hd.ma_khach_hang = kh.ma_khach_hang
+join dich_vu dv
+on hd.ma_dich_vu = dv.ma_dich_vu
+left join hop_dong_chi_tiet hdct
+on hd.ma_hop_dong = hdct.ma_hop_dong
+left join dich_vu_di_kem dvdk
+on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+group by hd.ma_hop_dong
+having sum(dv.chi_phi_thue) + sum(ifnull(hdct.so_luong, 0) * ifnull(dvdk.gia,0)) > 10000000
+) as t
+);
 
 -- câu 18
+alter table khach_hang
+add status bit default 1;
 
+update khach_hang
+set status = 0 
+where khach_hang.ma_khach_hang in (
+select *
+from (
+select kh.ma_khach_hang
+from khach_hang kh
+join hop_dong hd
+on hd.ma_khach_hang = kh.ma_khach_hang
+where year(hd.ngay_lam_hop_dong) < 2021
+) as t
+);
 
 -- câu 19
-
+update dich_vu_di_kem
+set gia = gia*2
+where dich_vu_di_kem.ma_dich_vu_di_kem in (
+select *
+from (
+select dvdk.ma_dich_vu_di_kem
+from dich_vu_di_kem dvdk
+join hop_dong_chi_tiet hdct
+on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+join hop_dong hd
+on hd.ma_hop_dong = hdct.ma_hop_dong
+where year(hd.ngay_lam_hop_dong) = 2020
+group by dvdk.ma_dich_vu_di_kem
+having sum(hdct.so_luong) > 10
+) as t
+);
 
 -- câu 20
+select nv.ma_nhan_vien as 'ma', nv.ho_ten, nv.email, nv.so_dien_thoai, nv.ngay_sinh, nv.dia_chi
+from nhan_vien nv
+union
+select kh.ma_khach_hang, kh.ho_ten, kh.email, kh.so_dien_thoai, kh.ngay_sinh, kh.dia_chi
+from khach_hang kh;
 
-
-
+-- câu 21 
+ create view v_nhan_vien (ma_nhan_vien, ho_ten,ngay_sinh, so_cmnd, luong, so_dien_thoai, email, dia_chi, ma_vi_tri, ma_trinh_do, ma_bo_phan)
+ as select nv.ma_nhan_vien, nv.ho_ten, nv.ngay_sinh, nv.so_cmnd, nv.luong, nv.so_dien_thoai, nv.email, nv.dia_chi, nv.ma_vi_tri, nv.ma_trinh_do, nv.ma_bo_phan
+ from nhan_vien nv
+ join hop_dong hd
+ on hd.ma_nhan_vien = nv.ma_nhan_vien
+ where hd.ngay_lam_hop_dong = '2020-07-14';
  
- 
+ select *
+ from v_nhan_vien;
+
+--  câu 22
+set sql_safe_updates = 0;
+
+update v_nhan_vien
+set dia_chi = 'liên chiểu';
+
+set sql_safe_updates = 1;
+
+-- câu 23
+delimiter //
+create procedure sp_xoa_khach_hang(ma_khach_hang int) 
+begin
+delete
+from khach_hang kh
+where kh.ma_khach_hang = ma_khach_hang;
+end //
+delimiter ;
+
+call sp_xoa_khach_hang(6);
+
+select *
+from khach_hang;
+
+-- câu 24
