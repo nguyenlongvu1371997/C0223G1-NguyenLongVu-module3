@@ -39,14 +39,25 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public void update(Product product) {
-        for(Product p : list){
-            if (p.getId()==product.getId()){
+        for (Product p : list) {
+            if (p.getId() == product.getId()) {
                 p.setName(product.getName());
                 p.setBrand(product.getBrand());
                 p.setPrice(product.getPrice());
                 return;
             }
         }
+    }
+
+    @Override
+    public ArrayList<Product> find(String name) {
+        ArrayList<Product> list1 = new ArrayList<>();
+        for (Product p : list) {
+            if (p.getName().equals(name)) {
+                list1.add(p);
+            }
+        }
+        return list1;
     }
 
 

@@ -17,6 +17,7 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
+            System.out.println("123");
             action = "";
         }
         switch (action) {
@@ -35,9 +36,10 @@ public class ProductServlet extends HttpServlet {
                 productService.delete(Integer.parseInt(request.getParameter("id")));
                 display(request, response, productService.display());
                 break;
-            case "product":
-                break;
             case "find":
+                System.out.println("abc");
+                productService.find(request.getParameter("name"));
+                display(request, response, productService.find(request.getParameter("name")));
                 break;
             default:
                 display(request, response, productService.display());

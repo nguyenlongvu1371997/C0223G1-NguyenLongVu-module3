@@ -12,4 +12,6 @@ public interface IProductService {
     void delete(Integer id);
 
     void update(Product product);
+
+    ArrayList<Product> find(String name);
 }

@@ -27,4 +27,9 @@ public class ProductService implements IProductService {
     public void update(Product product) {
         productRepository.update(product);
     }
+
+    @Override
+    public ArrayList<Product> find(String name) {
+        return productRepository.find(name);
+    }
 }

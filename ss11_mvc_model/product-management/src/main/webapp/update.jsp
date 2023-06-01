@@ -20,11 +20,11 @@
         <td>Price</td>
         <td></td>
     </tr>
-    <form method="get" action="/product-servlet?action=update">
-        <td><input name="id" ></td>
-        <td><input name="name" ></td>
-        <td><input name="brand" ></td>
-        <td><input name="price" ></td>
+    <form method="post" action="/product-servlet?action=update">
+        <td><input name="id" value="${product.id}" readonly></td>
+        <td><input value="${product.name}" name="name" ></td>
+        <td><input value="${product.brand}" name="brand" ></td>
+        <td><input value="${product.price}" name="price" ></td>
         <td><input type="submit"></td>
     </form>
 </table>
