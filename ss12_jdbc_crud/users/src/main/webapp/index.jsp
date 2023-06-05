@@ -12,6 +12,6 @@
     <title>$Title$</title>
   </head>
   <body>
-  <a href="/users-servlet">Hiện thị danh sách ở đây</a>
+  <a href="/users">Hiện thị danh sách ở đây</a>
   </body>
 </html>

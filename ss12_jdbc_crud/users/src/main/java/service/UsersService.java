@@ -14,17 +14,22 @@ public class UsersService implements IUsersService {
     }
 
     @Override
-    public void create(Users user) {
-        usersRepository.create(user);
+    public List<Users> find(int roomId, String name1) {
+        return usersRepository.find(roomId, name1);
     }
 
-    @Override
-    public void delete(int index) {
-        usersRepository.deleteUser(index);
-    }
+//    @Override
+//    public void create(Users user) {
+//       usersRepository.create(user);
+//    }
 
-    @Override
-    public void update(int id, Users users) {
-        usersRepository.update(id, users);
-    }
+//    @Override
+//    public void delete(int index) {
+//        usersRepository.deleteUser(index);
+//    }
+//
+//    @Override
+//    public void update(int id, Users users) {
+////        usersRepository.update(id, users);
+//    }
 }

@@ -10,6 +10,7 @@ public interface IUsersRepository {
     void deleteUser(int index);
 
     void create(Users user);
-
-    void update(int id, Users users);
+//
+//    void update(int id, Users users);
+    List<Users> find(int roomId,String name);
 }

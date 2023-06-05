@@ -1,5 +1,6 @@
 package controller;
 
+import model.Room;
 import model.Users;
 import service.UsersService;
 
@@ -9,7 +10,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "UsersServlet", value = "/users-servlet")
+@WebServlet(name = "UsersServlet", value = "/users")
 public class UsersServlet extends HttpServlet {
     UsersService usersService = new UsersService();
 
@@ -24,13 +25,14 @@ public class UsersServlet extends HttpServlet {
                 request.getRequestDispatcher("create.jsp").forward(request, response);
                 break;
             case "update":
-                int id = Integer.parseInt(request.getParameter("id"));
-                String name = request.getParameter("name");
-                String email = request.getParameter("email");
-                String country = request.getParameter("country");
-                Users user = new Users(id, name, email, country);
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("update.jsp").forward(request, response);
+//                int id = Integer.parseInt(request.getParameter("id"));
+//                String name = request.getParameter("name");
+//                String email = request.getParameter("email");
+//                String country = request.getParameter("country");
+//                Room room = new Room(request.getParameter("room"));
+//                Users user = new Users(id, name, email, country, room);
+//                request.setAttribute("user", user);
+//                request.getRequestDispatcher("update.jsp").forward(request, response);
             default:
                 displayListUsers(request, response);
                 break;
@@ -52,34 +54,43 @@ public class UsersServlet extends HttpServlet {
         }
         switch (action) {
             case "create":
-                createPost(request, response);
+//                createPost(request, response);
                 break;
             case "remove":
-                int id = Integer.parseInt(request.getParameter("id"));
-                usersService.delete(id);
-                displayListUsers(request, response);
+//                int id = Integer.parseInt(request.getParameter("id"));
+//                usersService.delete(id);
+//                displayListUsers(request, response);
                 break;
             case "update":
-                updatePost(request);
-                displayListUsers(request, response);
+//                updatePost(request);
+//                displayListUsers(request, response);
+            case "find":
+                String name = request.getParameter("name");
+                if(name.equals(null)){
+                    name = "";
+                }
+                int room = Integer.parseInt(request.getParameter("room"));
+                request.setAttribute("list", usersService.find(room, name));
+                RequestDispatcher rd = request.getRequestDispatcher("display.jsp");
+                rd.forward(request, response);
             default:
                 break;
         }
     }
 
     private void updatePost(HttpServletRequest request) {
-        int id = Integer.parseInt(request.getParameter("id"));
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String country = request.getParameter("country");
-        usersService.update(id, new Users(name, email, country));
+//        int id = Integer.parseInt(request.getParameter("id"));
+//        String name = request.getParameter("name");
+//        String email = request.getParameter("email");
+//        String country = request.getParameter("country");
+//        usersService.update(id, new Users(name, email, country));
     }
 
     private void createPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String country = request.getParameter("country");
-        usersService.create(new Users(name, email, country));
-        request.getRequestDispatcher("create.jsp").forward(request, response);
+//        String name = request.getParameter("name");
+//        String email = request.getParameter("email");
+//        String country = request.getParameter("country");
+//        usersService.create(new Users(name, email, country));
+//        request.getRequestDispatcher("create.jsp").forward(request, response);
     }
 }
